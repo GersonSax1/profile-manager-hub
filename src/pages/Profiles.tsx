@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { Home, ArrowLeft, Plus, LogOut } from 'lucide-react';
+import { Home, ArrowLeft, Plus, LogOut, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ChevronRight } from 'lucide-react';
@@ -103,12 +103,22 @@ const Profiles = () => {
                   <p className="text-accent">{profiles[0].email || 'correo@ejemplo.com'}</p>
                 </div>
               </div>
-              <Button
-                onClick={() => navigate(`/profile/${profiles[0].id}`)}
-                className="w-full bg-primary hover:bg-primary/90"
-              >
-                Ver Detalles del Perfil
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => navigate(`/profile-form/${profiles[0].id}`)}
+                  variant="secondary"
+                  className="flex-1"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Editar Perfil
+                </Button>
+                <Button
+                  onClick={() => navigate(`/profile/${profiles[0].id}`)}
+                  className="flex-1"
+                >
+                  Ver Detalles
+                </Button>
+              </div>
             </div>
 
             <Button
@@ -122,23 +132,38 @@ const Profiles = () => {
         ) : (
           <div className="space-y-3">
             {profiles.map((profile) => (
-              <button
-                key={profile.id}
-                onClick={() => navigate(`/profile/${profile.id}`)}
-                className="w-full bg-card p-4 rounded-lg shadow hover:shadow-lg transition-shadow flex items-center gap-4"
-              >
-                <Avatar className="w-16 h-16">
-                  <AvatarFallback className="bg-primary text-primary-foreground">
-                    {getInitials(profile.name)}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 text-left">
-                  <h3 className="font-semibold text-lg">{profile.name}</h3>
-                  <p className="text-sm text-muted-foreground">{profile.phone || '(123) 456-7890'}</p>
-                  <p className="text-sm text-accent">{profile.email || 'correo@ejemplo.com'}</p>
+              <div key={profile.id} className="w-full bg-card p-4 rounded-lg shadow hover:shadow-lg transition-shadow">
+                <div className="flex items-center gap-4 mb-3">
+                  <Avatar className="w-16 h-16">
+                    <AvatarFallback className="bg-primary text-primary-foreground">
+                      {getInitials(profile.name)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 text-left">
+                    <h3 className="font-semibold text-lg">{profile.name}</h3>
+                    <p className="text-sm text-muted-foreground">{profile.phone || '(123) 456-7890'}</p>
+                    <p className="text-sm text-accent">{profile.email || 'correo@ejemplo.com'}</p>
+                  </div>
                 </div>
-                <ChevronRight className="w-6 h-6 text-muted-foreground" />
-              </button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => navigate(`/profile-form/${profile.id}`)}
+                    variant="secondary"
+                    size="sm"
+                    className="flex-1"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Editar
+                  </Button>
+                  <Button
+                    onClick={() => navigate(`/profile/${profile.id}`)}
+                    size="sm"
+                    className="flex-1"
+                  >
+                    Ver Detalles
+                  </Button>
+                </div>
+              </div>
             ))}
 
             <Button
