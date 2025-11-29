@@ -77,7 +77,7 @@ const Profiles = () => {
       {/* Header */}
       <header className="bg-primary text-primary-foreground py-4 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <button onClick={() => navigate('/')} className="flex items-center gap-2">
+          <button onClick={() => navigate('/account')} className="flex items-center gap-2 hover:opacity-80">
             <ArrowLeft className="w-5 h-5" />
           </button>
           <h1 className="text-xl font-bold">Selecciona tu perfil</h1>
