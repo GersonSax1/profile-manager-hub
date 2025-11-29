@@ -3,9 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { LogOut, Users } from 'lucide-react';
+import { LogOut, Users, Bell, Upload, ScanLine, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Profile {
   id: string;
@@ -94,7 +100,60 @@ const Account = () => {
             </div>
           </div>
 
-          <div className="mt-8">
+          <div className="mt-8 space-y-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className="w-full bg-accent hover:bg-accent/90 h-14">
+                  Acciones Rápidas
+                  <ChevronDown className="w-5 h-5 ml-2" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-full min-w-[300px] bg-card border-border">
+                <DropdownMenuItem 
+                  onClick={() => {
+                    if (profile) {
+                      navigate(`/profile/${profile.id}/alarm/new`);
+                    } else {
+                      toast.error('Primero debes crear un perfil');
+                      navigate('/profiles');
+                    }
+                  }}
+                  className="cursor-pointer hover:bg-accent/10 py-3"
+                >
+                  <Bell className="w-5 h-5 mr-2" />
+                  <span>Crear Alarma</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => {
+                    if (profile) {
+                      navigate(`/profile/${profile.id}/upload`);
+                    } else {
+                      toast.error('Primero debes crear un perfil');
+                      navigate('/profiles');
+                    }
+                  }}
+                  className="cursor-pointer hover:bg-accent/10 py-3"
+                >
+                  <ScanLine className="w-5 h-5 mr-2" />
+                  <span>Escanear Documento</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => {
+                    if (profile) {
+                      navigate(`/profile/${profile.id}/upload`);
+                    } else {
+                      toast.error('Primero debes crear un perfil');
+                      navigate('/profiles');
+                    }
+                  }}
+                  className="cursor-pointer hover:bg-accent/10 py-3"
+                >
+                  <Upload className="w-5 h-5 mr-2" />
+                  <span>Subir Documento</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <Button
               onClick={() => {
                 console.log('Navigating to profiles...');
