@@ -23,9 +23,12 @@ const Index = () => {
             <span className="text-2xl font-bold">ProCura</span>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <a href="#about" className="text-sm hover:text-cyan transition-colors">
+            <button
+              onClick={() => navigate('/about')}
+              className="text-sm hover:text-cyan transition-colors"
+            >
               Quienes somos
-            </a>
+            </button>
             <Button
               variant="ghost"
               size="sm"
