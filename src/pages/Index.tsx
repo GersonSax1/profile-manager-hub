@@ -29,7 +29,7 @@ const Index = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/auth?mode=login')}
               className="text-primary-foreground hover:bg-primary-foreground/10"
             >
               <User className="w-4 h-4 mr-2" />
@@ -38,7 +38,7 @@ const Index = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/auth?mode=signup')}
               className="text-primary-foreground hover:bg-primary-foreground/10"
             >
               <UserPlus className="w-4 h-4 mr-2" />
@@ -69,7 +69,7 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Button
               size="lg"
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/auth?mode=signup')}
               className="bg-primary hover:bg-primary/90"
             >
               Comenzar Ahora
@@ -77,7 +77,7 @@ const Index = () => {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate('/auth?mode=login')}
             >
               Conocer Más
             </Button>
