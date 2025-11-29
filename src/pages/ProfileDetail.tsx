@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Bell, FileText, Upload, Clock } from 'lucide-react';
+import { ArrowLeft, Bell, FileText, Upload, Clock, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
@@ -13,6 +13,7 @@ interface Profile {
   email: string | null;
   phone: string | null;
   avatar_url: string | null;
+  blood_type: string | null;
 }
 
 const ProfileDetail = () => {
@@ -133,12 +134,26 @@ const ProfileDetail = () => {
                 {getInitials(profile.name)}
               </AvatarFallback>
             </Avatar>
-            <div>
+            <div className="flex-1">
               <h2 className="text-2xl font-bold">{profile.name}</h2>
-              <p className="text-muted-foreground">{profile.phone || '(123) 456-7890'}</p>
-              <p className="text-accent">{profile.email || 'correo@ejemplo.com'}</p>
+              <p className="text-muted-foreground">{profile.phone || 'Sin teléfono'}</p>
+              <p className="text-accent">{profile.email || 'Sin correo'}</p>
+              {profile.blood_type && (
+                <p className="text-sm font-semibold mt-1">
+                  <span className="text-muted-foreground">Tipo de sangre: </span>
+                  <span className="text-primary">{profile.blood_type}</span>
+                </p>
+              )}
             </div>
           </div>
+          
+          <Button
+            onClick={() => navigate(`/profile-form/${id}`)}
+            className="w-full bg-secondary hover:bg-secondary/90 mt-4"
+          >
+            <Edit className="w-4 h-4 mr-2" />
+            Editar Perfil
+          </Button>
         </div>
 
         {/* Menu Options */}
