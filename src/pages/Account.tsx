@@ -24,7 +24,7 @@ const Account = () => {
     } else if (user) {
       fetchProfile();
     }
-  }, [user, loading, navigate]);
+  }, [user, loading]);
 
   const fetchProfile = async () => {
     try {
@@ -96,7 +96,10 @@ const Account = () => {
 
           <div className="mt-8">
             <Button
-              onClick={() => navigate('/profiles')}
+              onClick={() => {
+                console.log('Navigating to profiles...');
+                navigate('/profiles');
+              }}
               className="w-full bg-secondary hover:bg-secondary/90 h-14"
             >
               <Users className="w-5 h-5 mr-2" />
