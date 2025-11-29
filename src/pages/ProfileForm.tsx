@@ -46,9 +46,15 @@ const ProfileForm = () => {
         .from('profiles')
         .select('*')
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      
+      if (!data) {
+        toast.error('Perfil no encontrado');
+        navigate('/profiles');
+        return;
+      }
       
       setName(data.name || '');
       setEmail(data.email || '');
