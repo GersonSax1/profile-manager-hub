@@ -10,6 +10,7 @@ import { useState } from 'react';
 import logo from '@/assets/logo.png';
 
 const authSchema = z.object({
+  name: z.string().optional(),
   email: z.string().email('Correo electrónico inválido').max(255),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres').max(100),
   confirmPassword: z.string().optional()
@@ -21,10 +22,19 @@ const authSchema = z.object({
 }, {
   message: 'Las contraseñas no coinciden',
   path: ['confirmPassword']
+}).refine((data) => {
+  if (!data.name && data.confirmPassword !== undefined) {
+    return false;
+  }
+  return true;
+}, {
+  message: 'El nombre completo es requerido',
+  path: ['name']
 });
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(false);
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -46,7 +56,7 @@ const Auth = () => {
     try {
       const validationData = isLogin 
         ? { email, password }
-        : { email, password, confirmPassword };
+        : { name, email, password, confirmPassword };
       
       authSchema.parse(validationData);
 
@@ -63,7 +73,7 @@ const Auth = () => {
           navigate('/account');
         }
       } else {
-        const { error } = await signUp(email, password);
+        const { error } = await signUp(email, password, name);
         if (error) {
           if (error.message.includes('already registered')) {
             toast.error('Este correo ya está registrado');
@@ -106,6 +116,23 @@ const Auth = () => {
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-sm font-medium">
+                  Nombre Completo
+                </Label>
+                <Input
+                  id="name"
+                  type="text"
+                  placeholder="Juan Pérez"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                  className="w-full"
+                />
+              </div>
+            )}
+
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">
                 Correo Electrónico

@@ -1,19 +1,48 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { LogOut, Users } from 'lucide-react';
+import { toast } from 'sonner';
 import logo from '@/assets/logo.png';
+
+interface Profile {
+  id: string;
+  name: string;
+  email: string | null;
+}
 
 const Account = () => {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
       navigate('/auth');
+    } else if (user) {
+      fetchProfile();
     }
   }, [user, loading, navigate]);
+
+  const fetchProfile = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('id, name, email')
+        .eq('user_id', user?.id)
+        .order('created_at', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      setProfile(data);
+    } catch (error: any) {
+      toast.error('Error al cargar el perfil');
+      console.error(error);
+    }
+  };
 
   const handleSignOut = async () => {
     await signOut();
@@ -52,15 +81,16 @@ const Account = () => {
             ¡Bienvenido!
           </h1>
           
+          {profile && (
+            <h2 className="text-xl text-center text-muted-foreground mb-8">
+              {profile.name}
+            </h2>
+          )}
+          
           <div className="mt-8 space-y-4">
             <div className="bg-muted/50 p-4 rounded-lg">
               <p className="text-sm text-muted-foreground mb-1">Correo Electrónico</p>
               <p className="text-lg font-medium text-card-foreground">{user.email}</p>
-            </div>
-
-            <div className="bg-muted/50 p-4 rounded-lg">
-              <p className="text-sm text-muted-foreground mb-1">ID de Usuario</p>
-              <p className="text-sm font-mono text-card-foreground break-all">{user.id}</p>
             </div>
           </div>
 
