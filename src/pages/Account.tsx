@@ -34,6 +34,7 @@ const Account = () => {
 
   const fetchProfile = async () => {
     try {
+      console.log('Fetching profile for user:', user?.id);
       const { data, error } = await supabase
         .from('profiles')
         .select('id, name, email')
@@ -42,11 +43,12 @@ const Account = () => {
         .limit(1)
         .maybeSingle();
 
+      console.log('Profile fetch result:', { data, error });
       if (error) throw error;
       setProfile(data);
     } catch (error: any) {
+      console.error('Error loading profile:', error);
       toast.error('Error al cargar el perfil');
-      console.error(error);
     }
   };
 
