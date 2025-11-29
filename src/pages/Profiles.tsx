@@ -18,18 +18,20 @@ interface Profile {
 
 const Profiles = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { user, signOut } = useAuth();
+  const [profilesLoading, setProfilesLoading] = useState(true);
+  const { user, signOut, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-
+ 
   useEffect(() => {
+    if (authLoading) return;
+
     if (!user) {
       navigate('/auth');
       return;
     }
     
     fetchProfiles();
-  }, [user, navigate]);
+  }, [user, authLoading, navigate]);
 
   const fetchProfiles = async () => {
     try {
@@ -44,7 +46,7 @@ const Profiles = () => {
       toast.error('Error al cargar perfiles');
       console.error(error);
     } finally {
-      setLoading(false);
+      setProfilesLoading(false);
     }
   };
 
@@ -62,7 +64,7 @@ const Profiles = () => {
       .slice(0, 2);
   };
 
-  if (loading) {
+  if (profilesLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-lg">Cargando...</p>
