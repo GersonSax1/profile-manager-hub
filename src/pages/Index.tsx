@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, User, UserPlus, Mail, Phone } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/logo.jpg';
 
 const Index = () => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Index = () => {
       <header className="bg-primary text-primary-foreground py-4 px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <img src={logo} alt="ProCura Logo" className="w-10 h-10" />
+            <img src={logo} alt="ProCura Logo" className="w-16 h-16 object-contain" />
             <span className="text-2xl font-bold">ProCura</span>
           </div>
           <nav className="hidden md:flex items-center gap-6">
@@ -100,7 +100,7 @@ const Index = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3">
-              <img src={logo} alt="ProCura Logo" className="w-8 h-8" />
+              <img src={logo} alt="ProCura Logo" className="w-12 h-12 object-contain" />
               <span className="font-bold text-lg">ProCura</span>
             </div>
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
