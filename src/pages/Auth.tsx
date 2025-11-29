@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { useState } from 'react';
 import logo from '@/assets/logo.jpg';
@@ -103,8 +103,17 @@ const Auth = () => {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="bg-primary text-primary-foreground py-4 px-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-center">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <button
+            onClick={() => navigate('/')}
+            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            aria-label="Volver a la página principal"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm">Volver</span>
+          </button>
           <span className="text-2xl font-bold">ProCura</span>
+          <div className="w-20" /> {/* Spacer para centrar el título */}
         </div>
       </header>
 
