@@ -3,6 +3,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
 import { z } from 'zod';
@@ -13,7 +14,8 @@ const authSchema = z.object({
   name: z.string().optional(),
   email: z.string().email('Correo electrónico inválido').max(255),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres').max(100),
-  confirmPassword: z.string().optional()
+  confirmPassword: z.string().optional(),
+  bloodType: z.string().optional()
 }).refine((data) => {
   if (data.confirmPassword !== undefined) {
     return data.password === data.confirmPassword;
@@ -38,6 +40,7 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [bloodType, setBloodType] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -56,7 +59,7 @@ const Auth = () => {
     try {
       const validationData = isLogin 
         ? { email, password }
-        : { name, email, password, confirmPassword };
+        : { name, email, password, confirmPassword, bloodType };
       
       authSchema.parse(validationData);
 
@@ -73,7 +76,7 @@ const Auth = () => {
           navigate('/account');
         }
       } else {
-        const { error } = await signUp(email, password, name);
+        const { error } = await signUp(email, password, name, bloodType);
         if (error) {
           if (error.message.includes('already registered')) {
             toast.error('Este correo ya está registrado');
@@ -117,20 +120,43 @@ const Auth = () => {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-medium">
-                  Nombre Completo
-                </Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Juan Pérez"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="w-full"
-                />
-              </div>
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="name" className="text-sm font-medium">
+                    Nombre Completo
+                  </Label>
+                  <Input
+                    id="name"
+                    type="text"
+                    placeholder="Juan Pérez"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bloodType" className="text-sm font-medium">
+                    Tipo de Sangre
+                  </Label>
+                  <Select value={bloodType} onValueChange={setBloodType}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Selecciona tu tipo de sangre" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="A+">A+ (A Positivo)</SelectItem>
+                      <SelectItem value="A-">A- (A Negativo)</SelectItem>
+                      <SelectItem value="B+">B+ (B Positivo)</SelectItem>
+                      <SelectItem value="B-">B- (B Negativo)</SelectItem>
+                      <SelectItem value="AB+">AB+ (AB Positivo) - Receptor universal</SelectItem>
+                      <SelectItem value="AB-">AB- (AB Negativo)</SelectItem>
+                      <SelectItem value="O+">O+ (O Positivo) - El más común</SelectItem>
+                      <SelectItem value="O-">O- (O Negativo) - Donante universal</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </>
             )}
 
             <div className="space-y-2">
