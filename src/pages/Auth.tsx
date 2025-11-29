@@ -36,7 +36,7 @@ const Auth = () => {
 
   // Redirect if already logged in
   if (user) {
-    navigate('/profiles');
+    navigate('/account');
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -60,7 +60,7 @@ const Auth = () => {
           }
         } else {
           toast.success('¡Sesión iniciada!');
-          navigate('/profiles');
+          navigate('/account');
         }
       } else {
         const { error } = await signUp(email, password);
