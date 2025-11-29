@@ -50,7 +50,6 @@ export default {
         navy: "hsl(var(--navy))",
         "navy-light": "hsl(var(--navy-light))",
         cyan: "hsl(var(--cyan))",
-        pink: "hsl(var(--pink))",
         "gray-light": "hsl(var(--gray-light))",
       },
       borderRadius: {
