@@ -86,35 +86,68 @@ const Profiles = () => {
       </header>
 
       <main className="max-w-2xl mx-auto p-4 py-8">
-        <div className="space-y-3">
-          {profiles.map((profile) => (
-            <button
-              key={profile.id}
-              onClick={() => navigate(`/profile/${profile.id}`)}
-              className="w-full bg-card p-4 rounded-lg shadow hover:shadow-lg transition-shadow flex items-center gap-4"
-            >
-              <Avatar className="w-16 h-16">
-                <AvatarFallback className="bg-primary text-primary-foreground">
-                  {getInitials(profile.name)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 text-left">
-                <h3 className="font-semibold text-lg">{profile.name}</h3>
-                <p className="text-sm text-muted-foreground">{profile.phone || '(123) 456-7890'}</p>
-                <p className="text-sm text-accent">{profile.email || 'correo@ejemplo.com'}</p>
+        {profiles.length === 1 ? (
+          <div className="space-y-6">
+            <div className="bg-card p-6 rounded-lg shadow-lg">
+              <div className="flex items-center gap-4 mb-6">
+                <Avatar className="w-20 h-20">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xl">
+                    {getInitials(profiles[0].name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h2 className="text-2xl font-bold">{profiles[0].name}</h2>
+                  <p className="text-muted-foreground">{profiles[0].phone || '(123) 456-7890'}</p>
+                  <p className="text-accent">{profiles[0].email || 'correo@ejemplo.com'}</p>
+                </div>
               </div>
-              <ChevronRight className="w-6 h-6 text-muted-foreground" />
-            </button>
-          ))}
+              <Button
+                onClick={() => navigate(`/profile/${profiles[0].id}`)}
+                className="w-full bg-primary hover:bg-primary/90"
+              >
+                Ver Detalles del Perfil
+              </Button>
+            </div>
 
-          <Button
-            onClick={() => navigate('/profile/new')}
-            className="w-full bg-secondary hover:bg-secondary/90 h-16"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Agregar Nuevo Perfil
-          </Button>
-        </div>
+            <Button
+              onClick={() => navigate('/profile/new')}
+              className="w-full bg-secondary hover:bg-secondary/90 h-16"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Agregar Otro Perfil
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {profiles.map((profile) => (
+              <button
+                key={profile.id}
+                onClick={() => navigate(`/profile/${profile.id}`)}
+                className="w-full bg-card p-4 rounded-lg shadow hover:shadow-lg transition-shadow flex items-center gap-4"
+              >
+                <Avatar className="w-16 h-16">
+                  <AvatarFallback className="bg-primary text-primary-foreground">
+                    {getInitials(profile.name)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 text-left">
+                  <h3 className="font-semibold text-lg">{profile.name}</h3>
+                  <p className="text-sm text-muted-foreground">{profile.phone || '(123) 456-7890'}</p>
+                  <p className="text-sm text-accent">{profile.email || 'correo@ejemplo.com'}</p>
+                </div>
+                <ChevronRight className="w-6 h-6 text-muted-foreground" />
+              </button>
+            ))}
+
+            <Button
+              onClick={() => navigate('/profile/new')}
+              className="w-full bg-secondary hover:bg-secondary/90 h-16"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Agregar Nuevo Perfil
+            </Button>
+          </div>
+        )}
       </main>
     </div>
   );
