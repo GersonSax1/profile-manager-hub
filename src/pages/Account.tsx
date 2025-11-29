@@ -140,7 +140,7 @@ const Account = () => {
                 <DropdownMenuItem 
                   onClick={() => {
                     if (profile) {
-                      navigate(`/profile/${profile.id}/upload`);
+                      navigate(`/profile/${profile.id}/documents`);
                     } else {
                       toast.error('Primero debes crear un perfil');
                       navigate('/profiles');
