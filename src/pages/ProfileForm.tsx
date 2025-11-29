@@ -87,19 +87,21 @@ const ProfileForm = () => {
 
         if (error) throw error;
         toast.success('Perfil actualizado exitosamente');
+        navigate('/profiles');
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('profiles')
           .insert({
             user_id: user.id,
             ...profileData
-          });
+          })
+          .select()
+          .single();
 
         if (error) throw error;
         toast.success('Perfil creado exitosamente');
+        navigate('/profiles');
       }
-
-      navigate(`/profile/${id}`);
     } catch (error: any) {
       if (error instanceof z.ZodError) {
         error.errors.forEach((err) => {
