@@ -25,10 +25,12 @@ const ProfileForm = () => {
   const [bloodType, setBloodType] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (loading) return;
+
     if (!user) {
       navigate('/auth');
       return;
@@ -38,7 +40,7 @@ const ProfileForm = () => {
       setIsEditing(true);
       fetchProfile();
     }
-  }, [id, user, navigate]);
+  }, [id, user, loading, navigate]);
 
   const fetchProfile = async () => {
     try {
