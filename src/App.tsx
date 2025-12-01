@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { TranslationProvider } from "@/contexts/TranslationContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import About from "./pages/About";
@@ -21,28 +22,30 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/how-it-works" element={<HowItWorks />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/profiles" element={<Profiles />} />
-          <Route path="/profile/:id" element={<ProfileDetail />} />
-          <Route path="/profile-form/:id" element={<ProfileForm />} />
-          <Route path="/profile/:profileId/alarm/new" element={<CreateAlarm />} />
-          <Route path="/profile/:profileId/alarms" element={<AlarmsList />} />
-          <Route path="/profile/:profileId/upload" element={<DocumentUpload />} />
-          <Route path="/profile/:profileId/documents" element={<DocumentsList />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <TranslationProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/auth" element={<Auth />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
+            <Route path="/account" element={<Account />} />
+            <Route path="/profiles" element={<Profiles />} />
+            <Route path="/profile/:id" element={<ProfileDetail />} />
+            <Route path="/profile-form/:id" element={<ProfileForm />} />
+            <Route path="/profile/:profileId/alarm/new" element={<CreateAlarm />} />
+            <Route path="/profile/:profileId/alarms" element={<AlarmsList />} />
+            <Route path="/profile/:profileId/upload" element={<DocumentUpload />} />
+            <Route path="/profile/:profileId/documents" element={<DocumentsList />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </TranslationProvider>
   </QueryClientProvider>
 );
 
