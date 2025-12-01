@@ -10,12 +10,24 @@ import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { z } from 'zod';
 
+const rutRegex = /^[0-9]{7,8}-[0-9Kk]$/;
+
 const profileSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido').max(100),
   email: z.string().email('Email inválido').max(255).optional().or(z.literal('')),
   phone: z.string().max(20).optional(),
   bloodType: z.string().optional(),
-  allergies: z.string().max(500).optional()
+  allergies: z.string().max(500).optional(),
+  profileType: z.enum(['human', 'pet']),
+  rut: z.string().regex(rutRegex, 'RUT inválido (formato: 12345678-9)').optional().or(z.literal(''))
+}).refine((data) => {
+  if (data.profileType === 'human' && !data.rut) {
+    return false;
+  }
+  return true;
+}, {
+  message: 'El RUT es requerido para personas',
+  path: ['rut']
 });
 
 const ProfileForm = () => {
@@ -25,6 +37,8 @@ const ProfileForm = () => {
   const [phone, setPhone] = useState('');
   const [bloodType, setBloodType] = useState('');
   const [allergies, setAllergies] = useState('');
+  const [profileType, setProfileType] = useState<'human' | 'pet'>('human');
+  const [rut, setRut] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { user, loading } = useAuth();
@@ -65,6 +79,8 @@ const ProfileForm = () => {
       setPhone(data.phone || '');
       setBloodType(data.blood_type || '');
       setAllergies(data.allergies || '');
+      setProfileType((data.profile_type as 'human' | 'pet') || 'human');
+      setRut(data.rut || '');
     } catch (error: any) {
       toast.error('Error al cargar el perfil');
       console.error(error);
@@ -81,14 +97,16 @@ const ProfileForm = () => {
     setIsLoading(true);
 
     try {
-      profileSchema.parse({ name, email, phone, bloodType, allergies });
+      profileSchema.parse({ name, email, phone, bloodType, allergies, profileType, rut });
 
       const profileData = {
         name,
         email: email || null,
         phone: phone || null,
         blood_type: bloodType || null,
-        allergies: allergies || null
+        allergies: allergies || null,
+        profile_type: profileType,
+        rut: profileType === 'human' ? (rut || null) : null
       };
 
       if (isEditing) {
@@ -143,15 +161,44 @@ const ProfileForm = () => {
       <main className="max-w-2xl mx-auto p-4 py-8">
         <form onSubmit={handleSubmit} className="bg-card p-6 rounded-lg shadow-lg space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="name">Nombre Completo *</Label>
+            <Label htmlFor="profileType">Tipo de Perfil *</Label>
+            <Select value={profileType} onValueChange={(value: 'human' | 'pet') => setProfileType(value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Selecciona el tipo de perfil" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="human">Persona</SelectItem>
+                <SelectItem value="pet">Mascota</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="name">{profileType === 'human' ? 'Nombre Completo' : 'Nombre de la Mascota'} *</Label>
             <Input
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Juan Pérez"
+              placeholder={profileType === 'human' ? 'Juan Pérez' : 'Max'}
               required
             />
           </div>
+
+          {profileType === 'human' && (
+            <div className="space-y-2">
+              <Label htmlFor="rut">RUT *</Label>
+              <Input
+                id="rut"
+                value={rut}
+                onChange={(e) => setRut(e.target.value.toUpperCase())}
+                placeholder="12345678-9"
+                required
+              />
+              <p className="text-xs text-muted-foreground">
+                Formato: 12345678-9 o 12345678-K
+              </p>
+            </div>
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="email">Correo Electrónico</Label>
