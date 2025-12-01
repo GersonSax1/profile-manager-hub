@@ -122,6 +122,9 @@ const Auth = () => {
       {/* Auth Form */}
       <main className="flex-1 flex items-center justify-center p-4">
         <div className="w-full max-w-md bg-card rounded-lg shadow-lg p-8">
+          <div className="flex justify-center mb-6">
+            <img src={logo} alt="ProCura Logo" className="w-24 h-24 object-contain" />
+          </div>
           <h1 className="text-3xl font-bold text-card-foreground mb-8 text-center">
             {isLogin ? 'Iniciar Sesión' : 'Crea una cuenta'}
           </h1>
