@@ -95,7 +95,7 @@ const Index = () => {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => navigate('/auth?mode=login')}
+              onClick={() => navigate('/how-it-works')}
             >
               Conocer Más
             </Button>
