@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import { z } from 'zod';
 import { useState } from 'react';
-import logo from '@/assets/logo.jpg';
+import logo from '@/assets/logo.png';
 
 const authSchema = z.object({
   name: z.string().optional(),
