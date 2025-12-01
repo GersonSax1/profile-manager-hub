@@ -14,6 +14,7 @@ interface Profile {
   phone: string | null;
   avatar_url: string | null;
   blood_type: string | null;
+  allergies: string | null;
 }
 
 const ProfileDetail = () => {
@@ -140,14 +141,27 @@ const ProfileDetail = () => {
               <h2 className="text-2xl font-bold">{profile.name}</h2>
               <p className="text-muted-foreground">{profile.phone || 'Sin teléfono'}</p>
               <p className="text-accent">{profile.email || 'Sin correo'}</p>
-              {profile.blood_type && (
-                <p className="text-sm font-semibold mt-1">
-                  <span className="text-muted-foreground">Tipo de sangre: </span>
-                  <span className="text-primary">{profile.blood_type}</span>
-                </p>
-              )}
             </div>
           </div>
+          
+          {/* Medical Information */}
+          {(profile.blood_type || profile.allergies) && (
+            <div className="mt-4 p-4 bg-muted/30 rounded-lg space-y-2">
+              <h3 className="font-semibold text-sm text-muted-foreground mb-2">Información Médica</h3>
+              {profile.blood_type && (
+                <div className="flex items-start gap-2">
+                  <span className="text-sm text-muted-foreground min-w-[110px]">Tipo de sangre:</span>
+                  <span className="text-sm font-semibold text-primary">{profile.blood_type}</span>
+                </div>
+              )}
+              {profile.allergies && (
+                <div className="flex items-start gap-2">
+                  <span className="text-sm text-muted-foreground min-w-[110px]">Alergias:</span>
+                  <span className="text-sm font-medium text-destructive">{profile.allergies}</span>
+                </div>
+              )}
+            </div>
+          )}
           
           <Button
             onClick={() => navigate(`/profile-form/${id}`)}
