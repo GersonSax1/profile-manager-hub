@@ -45,7 +45,7 @@ const Index = () => {
               className="text-primary-foreground hover:bg-primary-foreground/10"
             >
               <UserPlus className="w-4 h-4 mr-2" />
-              Registrars
+              Registrarse
             </Button>
           </nav>
           <button className="md:hidden">
