@@ -14,7 +14,8 @@ const profileSchema = z.object({
   name: z.string().min(1, 'El nombre es requerido').max(100),
   email: z.string().email('Email inválido').max(255).optional().or(z.literal('')),
   phone: z.string().max(20).optional(),
-  bloodType: z.string().optional()
+  bloodType: z.string().optional(),
+  allergies: z.string().max(500).optional()
 });
 
 const ProfileForm = () => {
@@ -23,6 +24,7 @@ const ProfileForm = () => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [bloodType, setBloodType] = useState('');
+  const [allergies, setAllergies] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const { user, loading } = useAuth();
@@ -62,6 +64,7 @@ const ProfileForm = () => {
       setEmail(data.email || '');
       setPhone(data.phone || '');
       setBloodType(data.blood_type || '');
+      setAllergies(data.allergies || '');
     } catch (error: any) {
       toast.error('Error al cargar el perfil');
       console.error(error);
@@ -78,13 +81,14 @@ const ProfileForm = () => {
     setIsLoading(true);
 
     try {
-      profileSchema.parse({ name, email, phone, bloodType });
+      profileSchema.parse({ name, email, phone, bloodType, allergies });
 
       const profileData = {
         name,
         email: email || null,
         phone: phone || null,
-        blood_type: bloodType || null
+        blood_type: bloodType || null,
+        allergies: allergies || null
       };
 
       if (isEditing) {
@@ -188,6 +192,20 @@ const ProfileForm = () => {
                 <SelectItem value="O-">O- (O Negativo) - Donante universal</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="allergies">Alergias</Label>
+            <Input
+              id="allergies"
+              value={allergies}
+              onChange={(e) => setAllergies(e.target.value)}
+              placeholder="Penicilina, maní, polen..."
+              maxLength={500}
+            />
+            <p className="text-xs text-muted-foreground">
+              Indica cualquier alergia conocida (medicamentos, alimentos, otros)
+            </p>
           </div>
 
           <Button
