@@ -52,14 +52,6 @@ const Index = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/about')}
-              className="text-primary-foreground hover:bg-primary-foreground/10 text-xs"
-            >
-              Quiénes somos
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
               onClick={() => navigate('/auth?mode=login')}
               className="text-primary-foreground hover:bg-primary-foreground/10"
             >
