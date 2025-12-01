@@ -20,18 +20,20 @@ interface Document {
 const DocumentsList = () => {
   const { profileId } = useParams();
   const [documents, setDocuments] = useState<Document[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const [documentsLoading, setDocumentsLoading] = useState(true);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (loading) return;
+
     if (!user) {
       navigate('/auth');
       return;
     }
     
     fetchDocuments();
-  }, [user, profileId, navigate]);
+  }, [user, loading, profileId, navigate]);
 
   const fetchDocuments = async () => {
     try {
@@ -47,7 +49,7 @@ const DocumentsList = () => {
       toast.error('Error al cargar documentos');
       console.error(error);
     } finally {
-      setLoading(false);
+      setDocumentsLoading(false);
     }
   };
 
@@ -105,7 +107,7 @@ const DocumentsList = () => {
     return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
   };
 
-  if (loading) {
+  if (documentsLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-lg">Cargando...</p>

@@ -21,18 +21,20 @@ interface Alarm {
 const AlarmsList = () => {
   const { profileId } = useParams();
   const [alarms, setAlarms] = useState<Alarm[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const [alarmsLoading, setAlarmsLoading] = useState(true);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (loading) return;
+
     if (!user) {
       navigate('/auth');
       return;
     }
     
     fetchAlarms();
-  }, [user, profileId, navigate]);
+  }, [user, loading, profileId, navigate]);
 
   const fetchAlarms = async () => {
     try {
@@ -49,7 +51,7 @@ const AlarmsList = () => {
       toast.error('Error al cargar alarmas');
       console.error(error);
     } finally {
-      setLoading(false);
+      setAlarmsLoading(false);
     }
   };
 
@@ -80,7 +82,7 @@ const AlarmsList = () => {
     return labels[frequency] || frequency;
   };
 
-  if (loading) {
+  if (alarmsLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-lg">Cargando...</p>
