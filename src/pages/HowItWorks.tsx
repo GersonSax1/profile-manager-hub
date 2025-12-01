@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Users, Bell, Upload, Shield, Heart } from 'lucide-react';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/logo-procura.png';
 
 const HowItWorks = () => {
   const navigate = useNavigate();
