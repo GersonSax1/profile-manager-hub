@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, User, UserPlus, Mail, Phone } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import logo from '@/assets/logo.jpg';
+import logo from '@/assets/logo.png';
 
 const Index = () => {
   const navigate = useNavigate();
