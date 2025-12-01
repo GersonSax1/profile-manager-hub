@@ -48,9 +48,24 @@ const Index = () => {
               Registrarse
             </Button>
           </nav>
-          <button className="md:hidden">
-            <Mail className="w-6 h-6" />
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/auth?mode=login')}
+              className="text-primary-foreground hover:bg-primary-foreground/10"
+            >
+              <User className="w-4 h-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/auth?mode=signup')}
+              className="text-primary-foreground hover:bg-primary-foreground/10"
+            >
+              <UserPlus className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       </header>
 
