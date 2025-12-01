@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Home, User, UserPlus, Mail, Phone } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { TranslatedText } from '@/components/TranslatedText';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import logo from '@/assets/logo.png';
 
 const Index = () => {
@@ -24,6 +25,7 @@ const Index = () => {
             <span className="text-2xl font-bold">ProCura</span>
           </div>
           <nav className="hidden md:flex items-center gap-6">
+            <ThemeToggle />
             <button
               onClick={() => navigate('/about')}
               className="text-sm hover:text-cyan transition-colors"
@@ -50,6 +52,7 @@ const Index = () => {
             </Button>
           </nav>
           <div className="md:hidden flex items-center gap-2">
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="sm"
