@@ -13,8 +13,16 @@ const DocumentUpload = () => {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-lg">Cargando...</p>
+      </div>
+    );
+  }
 
   if (!user) {
     navigate('/auth');

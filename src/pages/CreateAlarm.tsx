@@ -27,8 +27,16 @@ const CreateAlarm = () => {
   const [alarmTime, setAlarmTime] = useState('');
   const [frequency, setFrequency] = useState<'once' | 'daily' | 'weekly' | 'monthly'>('once');
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-lg">Cargando...</p>
+      </div>
+    );
+  }
 
   if (!user) {
     navigate('/auth');
