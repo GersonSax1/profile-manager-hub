@@ -19,11 +19,13 @@ interface Profile {
 const ProfileDetail = () => {
   const { id } = useParams();
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { user } = useAuth();
+  const [profileLoading, setProfileLoading] = useState(true);
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    if (loading) return;
+
     if (!user) {
       navigate('/auth');
       return;
@@ -32,9 +34,9 @@ const ProfileDetail = () => {
     if (id !== 'new') {
       fetchProfile();
     } else {
-      setLoading(false);
+      setProfileLoading(false);
     }
-  }, [user, id, navigate]);
+  }, [user, loading, id, navigate]);
 
   const fetchProfile = async () => {
     try {
@@ -51,7 +53,7 @@ const ProfileDetail = () => {
       console.error(error);
       navigate('/profiles');
     } finally {
-      setLoading(false);
+      setProfileLoading(false);
     }
   };
 
@@ -64,7 +66,7 @@ const ProfileDetail = () => {
       .slice(0, 2);
   };
 
-  if (loading) {
+  if (profileLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-lg">Cargando...</p>
