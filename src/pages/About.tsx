@@ -179,7 +179,7 @@ const About = () => {
       {/* Footer */}
       <footer className="border-t border-border mt-16 py-8">
         <div className="max-w-7xl mx-auto px-6 text-center text-muted-foreground">
-          <p>&copy; 2024 ProCura. Cuidando la salud de tu familia.</p>
+          <p>&copy; 2025 ProCura. Cuidando la salud de tu familia.</p>
         </div>
       </footer>
     </div>
