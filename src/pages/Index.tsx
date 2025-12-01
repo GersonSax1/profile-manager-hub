@@ -4,7 +4,7 @@ import { Home, User, UserPlus, Mail, Phone } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { TranslatedText } from '@/components/TranslatedText';
 import { ThemeToggle } from '@/components/ThemeToggle';
-import logo from '@/assets/logo.png';
+import logo from '@/assets/logo-procura.png';
 
 const Index = () => {
   const navigate = useNavigate();
