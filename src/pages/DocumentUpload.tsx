@@ -5,14 +5,16 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Upload, FileText } from 'lucide-react';
+import { ArrowLeft, Upload, FileText, Camera, QrCode } from 'lucide-react';
 import { toast } from 'sonner';
+import Scanner from '@/components/Scanner';
 
 const DocumentUpload = () => {
   const { profileId } = useParams();
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showScanner, setShowScanner] = useState(false);
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -34,8 +36,28 @@ const DocumentUpload = () => {
       const selectedFile = e.target.files[0];
       setFile(selectedFile);
       if (!name) {
-        setName(selectedFile.name);
+        setName(selectedFile.name.replace(/\.[^/.]+$/, ''));
       }
+    }
+  };
+
+  const handleCapture = (capturedFile: File) => {
+    setFile(capturedFile);
+    if (!name) {
+      const timestamp = new Date().toLocaleString('es-CL', { 
+        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' 
+      });
+      setName(`Escaneo ${timestamp}`);
+    }
+    setShowScanner(false);
+  };
+
+  const handleQrResult = (result: string) => {
+    setShowScanner(false);
+    toast.success(`Código QR: ${result}`);
+    // Could navigate to the URL or process the QR data
+    if (result.startsWith('http')) {
+      window.open(result, '_blank');
     }
   };
 
@@ -55,8 +77,7 @@ const DocumentUpload = () => {
     setIsLoading(true);
 
     try {
-      // Upload file to storage
-      const fileExt = file.name.split('.').pop();
+      const fileExt = file.name.split('.').pop() || 'jpg';
       const fileName = `${user.id}/${profileId}/${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
@@ -65,12 +86,6 @@ const DocumentUpload = () => {
 
       if (uploadError) throw uploadError;
 
-      // Get public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from('documents')
-        .getPublicUrl(fileName);
-
-      // Save document metadata
       const { error: dbError } = await supabase
         .from('documents')
         .insert({
@@ -93,6 +108,16 @@ const DocumentUpload = () => {
     }
   };
 
+  if (showScanner) {
+    return (
+      <Scanner
+        onCapture={handleCapture}
+        onQrResult={handleQrResult}
+        onClose={() => setShowScanner(false)}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <header className="bg-primary text-primary-foreground py-4 px-6">
@@ -106,6 +131,28 @@ const DocumentUpload = () => {
       </header>
 
       <main className="max-w-2xl mx-auto p-4 py-8">
+        {/* Scanner buttons for mobile */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowScanner(true)}
+            className="h-auto py-6 flex flex-col gap-2"
+          >
+            <Camera className="w-8 h-8" />
+            <span>Escanear Documento</span>
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => setShowScanner(true)}
+            className="h-auto py-6 flex flex-col gap-2"
+          >
+            <QrCode className="w-8 h-8" />
+            <span>Escanear QR</span>
+          </Button>
+        </div>
+
         <form onSubmit={handleSubmit} className="bg-card p-6 rounded-lg shadow-lg space-y-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nombre del Documento *</Label>
@@ -123,7 +170,15 @@ const DocumentUpload = () => {
             <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
               {file ? (
                 <div className="space-y-2">
-                  <FileText className="w-12 h-12 mx-auto text-primary" />
+                  {file.type.startsWith('image/') ? (
+                    <img 
+                      src={URL.createObjectURL(file)} 
+                      alt="Preview" 
+                      className="max-w-full max-h-48 mx-auto rounded-lg"
+                    />
+                  ) : (
+                    <FileText className="w-12 h-12 mx-auto text-primary" />
+                  )}
                   <p className="font-medium">{file.name}</p>
                   <p className="text-sm text-muted-foreground">
                     {(file.size / 1024 / 1024).toFixed(2)} MB
@@ -156,7 +211,8 @@ const DocumentUpload = () => {
                 type="file"
                 onChange={handleFileChange}
                 className="hidden"
-                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
+                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,image/*"
+                capture="environment"
               />
             </div>
           </div>
