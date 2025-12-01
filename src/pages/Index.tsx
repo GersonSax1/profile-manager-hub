@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Home, User, UserPlus, Mail, Phone } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
+import { TranslatedText } from '@/components/TranslatedText';
 import logo from '@/assets/logo.png';
 
 const Index = () => {
@@ -27,7 +28,7 @@ const Index = () => {
               onClick={() => navigate('/about')}
               className="text-sm hover:text-cyan transition-colors"
             >
-              Quienes somos
+              <TranslatedText>Quienes somos</TranslatedText>
             </button>
             <Button
               variant="ghost"
@@ -36,7 +37,7 @@ const Index = () => {
               className="text-primary-foreground hover:bg-primary-foreground/10"
             >
               <User className="w-4 h-4 mr-2" />
-              Iniciar sesión
+              <TranslatedText>Iniciar sesión</TranslatedText>
             </Button>
             <Button
               variant="ghost"
@@ -45,7 +46,7 @@ const Index = () => {
               className="text-primary-foreground hover:bg-primary-foreground/10"
             >
               <UserPlus className="w-4 h-4 mr-2" />
-              Registrarse
+              <TranslatedText>Registrarse</TranslatedText>
             </Button>
           </nav>
           <div className="md:hidden flex items-center gap-2">
@@ -73,15 +74,15 @@ const Index = () => {
       <main className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-2 gap-8 items-center">
         <div className="space-y-6">
           <div className="text-sm uppercase tracking-wider text-muted-foreground">
-            PROCURA ES UNA APLICACIÓN DISEÑADA PARA ORGANIZAR, PROTEGER Y CENTRALIZAR LA INFORMACIÓN MÉDICA Y VETERINARIA DE TODO TU NÚCLEO FAMILIAR.
+            <TranslatedText>PROCURA ES UNA APLICACIÓN DISEÑADA PARA ORGANIZAR, PROTEGER Y CENTRALIZAR LA INFORMACIÓN MÉDICA Y VETERINARIA DE TODO TU NÚCLEO FAMILIAR.</TranslatedText>
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-foreground">
-            Tu salud <span className="text-foreground">y la de tu familia en un solo lugar</span>
+            <TranslatedText>Tu salud y la de tu familia en un solo lugar</TranslatedText>
           </h1>
 
           <p className="text-lg text-muted-foreground italic">
-            Desde un único espacio digital, podrás guardar documentos médicos, programar recordatorios de tratamientos o controles, y compartir información relevante con los miembros de tu familia de forma segura.
+            <TranslatedText>Desde un único espacio digital, podrás guardar documentos médicos, programar recordatorios de tratamientos o controles, y compartir información relevante con los miembros de tu familia de forma segura.</TranslatedText>
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
@@ -90,14 +91,14 @@ const Index = () => {
               onClick={() => navigate('/auth?mode=signup')}
               className="bg-primary hover:bg-primary/90"
             >
-              Comenzar Ahora
+              <TranslatedText>Comenzar Ahora</TranslatedText>
             </Button>
             <Button
               size="lg"
               variant="outline"
               onClick={() => navigate('/how-it-works')}
             >
-              Conocer Más
+              <TranslatedText>Conocer Más</TranslatedText>
             </Button>
           </div>
         </div>
@@ -124,11 +125,11 @@ const Index = () => {
             <div className="flex items-center gap-6 text-sm text-muted-foreground">
               <a href="#" className="hover:text-foreground transition-colors flex items-center gap-2">
                 <Mail className="w-4 h-4" />
-                Contacto
+                <TranslatedText>Contacto</TranslatedText>
               </a>
               <a href="#" className="hover:text-foreground transition-colors flex items-center gap-2">
                 <Phone className="w-4 h-4" />
-                Soporte
+                <TranslatedText>Soporte</TranslatedText>
               </a>
             </div>
           </div>
