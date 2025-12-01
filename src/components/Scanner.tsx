@@ -110,13 +110,23 @@ const Scanner = ({ onCapture, onQrResult, onClose }: ScannerProps) => {
     setFacingMode(prev => prev === 'environment' ? 'user' : 'environment');
   };
 
+  // Start camera when facingMode changes (for photo/document modes)
   useEffect(() => {
     if (isScanning && mode !== 'qr') {
       startCamera();
-    } else if (isScanning && mode === 'qr') {
-      startQrScanner();
     }
-  }, [facingMode]);
+  }, [facingMode, isScanning, mode]);
+
+  // Start QR scanner after the element is rendered
+  useEffect(() => {
+    if (isScanning && mode === 'qr') {
+      // Small delay to ensure DOM element exists
+      const timer = setTimeout(() => {
+        startQrScanner();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isScanning, mode]);
 
   useEffect(() => {
     return () => {
@@ -131,7 +141,7 @@ const Scanner = ({ onCapture, onQrResult, onClose }: ScannerProps) => {
 
   const handleStartScan = () => {
     if (mode === 'qr') {
-      startQrScanner();
+      setIsScanning(true); // Let useEffect handle starting the scanner after render
     } else {
       startCamera();
     }
