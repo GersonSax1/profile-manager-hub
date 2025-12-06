@@ -74,13 +74,20 @@ const DocumentsList = () => {
       if (error) throw error;
       
       // Generate thumbnail URLs for images
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const docsWithThumbnails = await Promise.all(
         (data || []).map(async (doc: Document) => {
           if (isImageType(doc.file_type)) {
             const { data: signedData } = await supabase.storage
               .from('documents')
               .createSignedUrl(doc.file_url, 3600);
-            return { ...doc, thumbnailUrl: signedData?.signedUrl };
+            // Build full URL - signedUrl can be relative path
+            const thumbnailUrl = signedData?.signedUrl 
+              ? (signedData.signedUrl.startsWith('http') 
+                  ? signedData.signedUrl 
+                  : `${supabaseUrl}/storage/v1${signedData.signedUrl}`)
+              : undefined;
+            return { ...doc, thumbnailUrl };
           }
           return doc;
         })
