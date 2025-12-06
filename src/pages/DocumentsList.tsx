@@ -119,6 +119,19 @@ const DocumentsList = () => {
 
   const viewDocument = async (doc: Document) => {
     try {
+      // For PDFs, get a signed URL and open in new tab (Chrome blocks blob PDFs in dialogs)
+      if (isPdf(doc.file_type)) {
+        const { data: signedData, error: signedError } = await supabase.storage
+          .from('documents')
+          .createSignedUrl(doc.file_url, 3600); // 1 hour expiry
+
+        if (signedError) throw signedError;
+        
+        window.open(signedData.signedUrl, '_blank');
+        return;
+      }
+
+      // For images, download and show in dialog
       const { data, error } = await supabase.storage
         .from('documents')
         .download(doc.file_url);
@@ -130,7 +143,6 @@ const DocumentsList = () => {
         URL.revokeObjectURL(previewUrl);
       }
 
-      // Create blob with correct MIME type for proper PDF rendering
       const mimeType = doc.file_type || 'application/octet-stream';
       const blob = new Blob([data], { type: mimeType });
       const url = URL.createObjectURL(blob);
