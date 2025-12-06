@@ -18,6 +18,7 @@ const profileSchema = z.object({
   phone: z.string().max(20).optional(),
   bloodType: z.string().optional(),
   allergies: z.string().max(500).optional(),
+  medications: z.string().max(500).optional(),
   profileType: z.enum(['human', 'pet']),
   rut: z.string().regex(rutRegex, 'RUT inválido (formato: 12345678-9)').optional().or(z.literal(''))
 }).refine((data) => {
@@ -37,6 +38,7 @@ const ProfileForm = () => {
   const [phone, setPhone] = useState('');
   const [bloodType, setBloodType] = useState('');
   const [allergies, setAllergies] = useState('');
+  const [medications, setMedications] = useState('');
   const [profileType, setProfileType] = useState<'human' | 'pet'>('human');
   const [rut, setRut] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -79,6 +81,7 @@ const ProfileForm = () => {
       setPhone(data.phone || '');
       setBloodType(data.blood_type || '');
       setAllergies(data.allergies || '');
+      setMedications(data.medications || '');
       setProfileType((data.profile_type as 'human' | 'pet') || 'human');
       setRut(data.rut || '');
     } catch (error: any) {
@@ -97,7 +100,7 @@ const ProfileForm = () => {
     setIsLoading(true);
 
     try {
-      profileSchema.parse({ name, email, phone, bloodType, allergies, profileType, rut });
+      profileSchema.parse({ name, email, phone, bloodType, allergies, medications, profileType, rut });
 
       const profileData = {
         name,
@@ -105,6 +108,7 @@ const ProfileForm = () => {
         phone: phone || null,
         blood_type: bloodType || null,
         allergies: allergies || null,
+        medications: medications || null,
         profile_type: profileType,
         rut: profileType === 'human' ? (rut || null) : null
       };
@@ -252,6 +256,20 @@ const ProfileForm = () => {
             />
             <p className="text-xs text-muted-foreground">
               Indica cualquier alergia conocida (medicamentos, alimentos, otros)
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="medications">Medicamentos</Label>
+            <Input
+              id="medications"
+              value={medications}
+              onChange={(e) => setMedications(e.target.value)}
+              placeholder="Aspirina, Ibuprofeno, Metformina..."
+              maxLength={500}
+            />
+            <p className="text-xs text-muted-foreground">
+              Lista los medicamentos que consume regularmente
             </p>
           </div>
 
