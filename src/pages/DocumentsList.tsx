@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, FileText, Download, Trash2, Eye } from 'lucide-react';
+import { ArrowLeft, Plus, FileText, Download, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -334,13 +334,6 @@ const DocumentsList = () => {
                       title="Descargar"
                     >
                       <Download className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={() => deleteDocument(doc.id, doc.file_url)}
-                      className="text-destructive hover:text-destructive/80"
-                      title="Eliminar"
-                    >
-                      <Trash2 className="w-5 h-5" />
                     </button>
                   </div>
                 </div>

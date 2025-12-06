@@ -27,7 +27,7 @@ export const useAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, name?: string, bloodType?: string) => {
+  const signUp = async (email: string, password: string, name?: string, bloodType?: string, rut?: string) => {
     const redirectUrl = `${window.location.origin}/`;
     const { error } = await supabase.auth.signUp({
       email,
@@ -36,7 +36,8 @@ export const useAuth = () => {
         emailRedirectTo: redirectUrl,
         data: {
           name: name || 'Usuario',
-          blood_type: bloodType
+          blood_type: bloodType,
+          rut: rut
         }
       }
     });
