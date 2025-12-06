@@ -270,11 +270,20 @@ const DocumentsList = () => {
               />
             )}
             {previewUrl && isPdf(previewType) && (
-              <iframe
-                src={previewUrl}
-                title={previewName}
-                className="w-full h-[70vh] border-0"
-              />
+              <div className="w-full h-[70vh] flex flex-col">
+                <object
+                  data={previewUrl}
+                  type="application/pdf"
+                  className="w-full flex-1"
+                >
+                  <div className="flex flex-col items-center justify-center h-full gap-4 text-muted-foreground">
+                    <p>No se puede mostrar el PDF en el navegador.</p>
+                    <Button onClick={() => window.open(previewUrl, '_blank')}>
+                      Abrir en nueva pestaña
+                    </Button>
+                  </div>
+                </object>
+              </div>
             )}
           </div>
         </DialogContent>
