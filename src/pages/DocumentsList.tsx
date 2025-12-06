@@ -130,7 +130,11 @@ const DocumentsList = () => {
         URL.revokeObjectURL(previewUrl);
       }
 
-      const url = URL.createObjectURL(data);
+      // Create blob with correct MIME type for proper PDF rendering
+      const mimeType = doc.file_type || 'application/octet-stream';
+      const blob = new Blob([data], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      
       setPreviewUrl(url);
       setPreviewType(doc.file_type);
       setPreviewName(doc.name);
