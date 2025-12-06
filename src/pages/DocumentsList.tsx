@@ -23,9 +23,13 @@ interface Document {
   created_at: string;
 }
 
+interface DocumentWithThumbnail extends Document {
+  thumbnailUrl?: string;
+}
+
 const DocumentsList = () => {
   const { profileId } = useParams();
-  const [documents, setDocuments] = useState<Document[]>([]);
+  const [documents, setDocuments] = useState<DocumentWithThumbnail[]>([]);
   const [documentsLoading, setDocumentsLoading] = useState(true);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -54,6 +58,11 @@ const DocumentsList = () => {
     };
   }, [previewUrl]);
 
+  const isImageType = (fileType: string | null) => {
+    if (!fileType) return false;
+    return fileType.startsWith('image/');
+  };
+
   const fetchDocuments = async () => {
     try {
       const { data, error } = await supabase
@@ -63,7 +72,21 @@ const DocumentsList = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setDocuments(data || []);
+      
+      // Generate thumbnail URLs for images
+      const docsWithThumbnails = await Promise.all(
+        (data || []).map(async (doc: Document) => {
+          if (isImageType(doc.file_type)) {
+            const { data: signedData } = await supabase.storage
+              .from('documents')
+              .createSignedUrl(doc.file_url, 3600);
+            return { ...doc, thumbnailUrl: signedData?.signedUrl };
+          }
+          return doc;
+        })
+      );
+      
+      setDocuments(docsWithThumbnails);
     } catch (error: any) {
       toast.error('Error al cargar documentos');
       console.error(error);
@@ -226,7 +249,15 @@ const DocumentsList = () => {
             documents.map((doc) => (
               <div key={doc.id} className="bg-card p-4 rounded-lg shadow">
                 <div className="flex items-start gap-3">
-                  <FileText className="w-10 h-10 text-primary flex-shrink-0" />
+                  {doc.thumbnailUrl ? (
+                    <img 
+                      src={doc.thumbnailUrl} 
+                      alt={doc.name}
+                      className="w-12 h-12 object-cover rounded flex-shrink-0"
+                    />
+                  ) : (
+                    <FileText className="w-10 h-10 text-primary flex-shrink-0" />
+                  )}
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-lg truncate">{doc.name}</h3>
                     <p className="text-sm text-muted-foreground">
