@@ -51,8 +51,13 @@ const Profiles = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      navigate('/');
+    }
   };
 
   const getInitials = (name: string) => {
