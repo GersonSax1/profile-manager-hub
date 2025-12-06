@@ -133,8 +133,8 @@ const ProfileDetail = () => {
         <div className="bg-card p-6 rounded-lg shadow-lg mb-8">
           <div className="flex items-center gap-4 mb-4">
             <Avatar className="w-20 h-20">
-              <AvatarFallback className="bg-primary text-primary-foreground text-2xl">
-                {getInitials(profile.name)}
+              <AvatarFallback className="bg-primary text-primary-foreground text-2xl font-bold" style={{ fontFamily: 'sans-serif', fontVariantEmoji: 'text' }}>
+                <span aria-hidden="true">{getInitials(profile.name)}</span>
               </AvatarFallback>
             </Avatar>
             <div className="flex-1">
