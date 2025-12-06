@@ -119,7 +119,7 @@ const DocumentsList = () => {
 
   const viewDocument = async (doc: Document) => {
     try {
-      // For PDFs, get a signed URL and open in new tab (Chrome blocks blob PDFs in dialogs)
+      // For PDFs, get a signed URL and open directly (works better on mobile)
       if (isPdf(doc.file_type)) {
         const { data: signedData, error: signedError } = await supabase.storage
           .from('documents')
@@ -127,7 +127,14 @@ const DocumentsList = () => {
 
         if (signedError) throw signedError;
         
-        window.open(signedData.signedUrl, '_blank');
+        // Use anchor element for better mobile compatibility
+        const link = document.createElement('a');
+        link.href = signedData.signedUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
         return;
       }
 
