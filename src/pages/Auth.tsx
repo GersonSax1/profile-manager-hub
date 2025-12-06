@@ -10,12 +10,15 @@ import { z } from 'zod';
 import { useState } from 'react';
 import logo from '@/assets/logo-procura.png';
 
+const rutRegex = /^[0-9]{7,8}-[0-9Kk]$/;
+
 const authSchema = z.object({
   name: z.string().optional(),
   email: z.string().email('Correo electrónico inválido').max(255),
   password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres').max(100),
   confirmPassword: z.string().optional(),
-  bloodType: z.string().optional()
+  bloodType: z.string().optional(),
+  rut: z.string().regex(rutRegex, 'RUT inválido (formato: 12345678-9)').optional().or(z.literal(''))
 }).refine((data) => {
   if (data.confirmPassword !== undefined) {
     return data.password === data.confirmPassword;
@@ -32,6 +35,14 @@ const authSchema = z.object({
 }, {
   message: 'El nombre completo es requerido',
   path: ['name']
+}).refine((data) => {
+  if (data.confirmPassword !== undefined && !data.rut) {
+    return false;
+  }
+  return true;
+}, {
+  message: 'El RUT es requerido',
+  path: ['rut']
 });
 
 const Auth = () => {
@@ -43,6 +54,7 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [bloodType, setBloodType] = useState('');
+  const [rut, setRut] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -61,7 +73,7 @@ const Auth = () => {
     try {
       const validationData = isLogin 
         ? { email, password }
-        : { name, email, password, confirmPassword, bloodType };
+        : { name, email, password, confirmPassword, bloodType, rut };
       
       authSchema.parse(validationData);
 
@@ -78,7 +90,7 @@ const Auth = () => {
           navigate('/account');
         }
       } else {
-        const { error } = await signUp(email, password, name, bloodType);
+        const { error } = await signUp(email, password, name, bloodType, rut);
         if (error) {
           if (error.message.includes('already registered')) {
             toast.error('Este correo ya está registrado');
@@ -146,6 +158,24 @@ const Auth = () => {
                     required
                     className="w-full"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="rut" className="text-sm font-medium">
+                    RUT *
+                  </Label>
+                  <Input
+                    id="rut"
+                    type="text"
+                    placeholder="12345678-9"
+                    value={rut}
+                    onChange={(e) => setRut(e.target.value.toUpperCase())}
+                    required
+                    className="w-full"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Formato: 12345678-9 o 12345678-K
+                  </p>
                 </div>
 
                 <div className="space-y-2">
