@@ -119,22 +119,18 @@ const DocumentsList = () => {
 
   const viewDocument = async (doc: Document) => {
     try {
-      // For PDFs, get a signed URL and open directly (works better on mobile)
+      // For PDFs, get a signed URL and open directly using window.location for better mobile support
       if (isPdf(doc.file_type)) {
+        toast.info('Abriendo PDF...');
+        
         const { data: signedData, error: signedError } = await supabase.storage
           .from('documents')
           .createSignedUrl(doc.file_url, 3600); // 1 hour expiry
 
         if (signedError) throw signedError;
         
-        // Use anchor element for better mobile compatibility
-        const link = document.createElement('a');
-        link.href = signedData.signedUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Direct navigation works better on mobile browsers
+        window.location.href = signedData.signedUrl;
         return;
       }
 
