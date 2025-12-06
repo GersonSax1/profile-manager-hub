@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useAlarmNotifications } from '@/hooks/useAlarmNotifications';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { LogOut, Users, Bell, Upload, ScanLine, ChevronDown } from 'lucide-react';
@@ -23,6 +24,9 @@ const Account = () => {
   const { user, signOut, loading } = useAuth();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile | null>(null);
+
+  // Enable alarm notifications for this user
+  useAlarmNotifications(user?.id);
 
   useEffect(() => {
     if (!loading && !user) {
