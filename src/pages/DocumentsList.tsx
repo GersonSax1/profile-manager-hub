@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, FileText, Download, Trash2, Eye, X } from 'lucide-react';
+import { ArrowLeft, Plus, FileText, Download, Trash2, Eye } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -13,6 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Set worker source for PDF.js
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface Document {
   id: string;
@@ -63,6 +67,39 @@ const DocumentsList = () => {
     return fileType.startsWith('image/');
   };
 
+  const isPdfType = (fileType: string | null) => {
+    if (!fileType) return false;
+    return fileType === 'application/pdf';
+  };
+
+  const generatePdfThumbnail = async (pdfUrl: string): Promise<string | undefined> => {
+    try {
+      const loadingTask = pdfjsLib.getDocument(pdfUrl);
+      const pdf = await loadingTask.promise;
+      const page = await pdf.getPage(1);
+      
+      const scale = 0.5;
+      const viewport = page.getViewport({ scale });
+      
+      const canvas = window.document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return undefined;
+      
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      
+      await page.render({
+        canvasContext: context,
+        viewport: viewport
+      }).promise;
+      
+      return canvas.toDataURL('image/jpeg', 0.7);
+    } catch (error) {
+      console.error('Error generating PDF thumbnail:', error);
+      return undefined;
+    }
+  };
+
   const fetchDocuments = async () => {
     try {
       const { data, error } = await supabase
@@ -73,22 +110,29 @@ const DocumentsList = () => {
 
       if (error) throw error;
       
-      // Generate thumbnail URLs for images
+      // Generate thumbnail URLs for images and PDFs
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const docsWithThumbnails = await Promise.all(
         (data || []).map(async (doc: Document) => {
-          if (isImageType(doc.file_type)) {
-            const { data: signedData } = await supabase.storage
-              .from('documents')
-              .createSignedUrl(doc.file_url, 3600);
-            // Build full URL - signedUrl can be relative path
-            const thumbnailUrl = signedData?.signedUrl 
-              ? (signedData.signedUrl.startsWith('http') 
-                  ? signedData.signedUrl 
-                  : `${supabaseUrl}/storage/v1${signedData.signedUrl}`)
-              : undefined;
-            return { ...doc, thumbnailUrl };
+          const { data: signedData } = await supabase.storage
+            .from('documents')
+            .createSignedUrl(doc.file_url, 3600);
+          
+          const fullUrl = signedData?.signedUrl 
+            ? (signedData.signedUrl.startsWith('http') 
+                ? signedData.signedUrl 
+                : `${supabaseUrl}/storage/v1${signedData.signedUrl}`)
+            : undefined;
+
+          if (isImageType(doc.file_type) && fullUrl) {
+            return { ...doc, thumbnailUrl: fullUrl };
           }
+          
+          if (isPdfType(doc.file_type) && fullUrl) {
+            const pdfThumbnail = await generatePdfThumbnail(fullUrl);
+            return { ...doc, thumbnailUrl: pdfThumbnail };
+          }
+          
           return doc;
         })
       );
