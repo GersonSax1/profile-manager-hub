@@ -43,6 +43,7 @@ const ProfileForm = () => {
   const [rut, setRut] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [isFetchingProfile, setIsFetchingProfile] = useState(false);
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -61,6 +62,7 @@ const ProfileForm = () => {
   }, [id, user, loading, navigate]);
 
   const fetchProfile = async () => {
+    setIsFetchingProfile(true);
     try {
       const { data, error } = await supabase
         .from('profiles')
@@ -88,10 +90,12 @@ const ProfileForm = () => {
       toast.error('Error al cargar el perfil');
       console.error(error);
       navigate('/profiles');
+    } finally {
+      setIsFetchingProfile(false);
     }
   };
 
-  if (loading) {
+  if (loading || isFetchingProfile) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <p className="text-lg">Cargando...</p>
@@ -100,6 +104,7 @@ const ProfileForm = () => {
   }
 
   if (!user) {
+    navigate('/auth');
     return null;
   }
 
