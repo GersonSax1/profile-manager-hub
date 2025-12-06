@@ -57,8 +57,13 @@ const Account = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Sign out error:', error);
+    } finally {
+      navigate('/');
+    }
   };
 
   if (loading) {
