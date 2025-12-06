@@ -3,10 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus, FileText, Download, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, FileText, Download, Trash2, Eye, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 
 interface Document {
   id: string;
@@ -21,6 +27,10 @@ const DocumentsList = () => {
   const { profileId } = useParams();
   const [documents, setDocuments] = useState<Document[]>([]);
   const [documentsLoading, setDocumentsLoading] = useState(true);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [previewType, setPreviewType] = useState<string | null>(null);
+  const [previewName, setPreviewName] = useState<string>('');
   const { user, loading } = useAuth();
   const navigate = useNavigate();
 
@@ -34,6 +44,15 @@ const DocumentsList = () => {
     
     fetchDocuments();
   }, [user, loading, profileId, navigate]);
+
+  // Cleanup preview URL on unmount
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const fetchDocuments = async () => {
     try {
@@ -55,14 +74,12 @@ const DocumentsList = () => {
 
   const deleteDocument = async (id: string, fileUrl: string) => {
     try {
-      // Delete file from storage
       const { error: storageError } = await supabase.storage
         .from('documents')
         .remove([fileUrl]);
 
       if (storageError) throw storageError;
 
-      // Delete document metadata
       const { error: dbError } = await supabase
         .from('documents')
         .delete()
@@ -98,6 +115,50 @@ const DocumentsList = () => {
       toast.error('Error al descargar documento');
       console.error(error);
     }
+  };
+
+  const viewDocument = async (doc: Document) => {
+    try {
+      const { data, error } = await supabase.storage
+        .from('documents')
+        .download(doc.file_url);
+
+      if (error) throw error;
+
+      // Cleanup previous URL
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      const url = URL.createObjectURL(data);
+      setPreviewUrl(url);
+      setPreviewType(doc.file_type);
+      setPreviewName(doc.name);
+      setPreviewOpen(true);
+    } catch (error: any) {
+      toast.error('Error al visualizar documento');
+      console.error(error);
+    }
+  };
+
+  const closePreview = () => {
+    setPreviewOpen(false);
+    if (previewUrl) {
+      URL.revokeObjectURL(previewUrl);
+      setPreviewUrl(null);
+    }
+    setPreviewType(null);
+    setPreviewName('');
+  };
+
+  const isImage = (fileType: string | null) => {
+    if (!fileType) return false;
+    return fileType.startsWith('image/');
+  };
+
+  const isPdf = (fileType: string | null) => {
+    if (!fileType) return false;
+    return fileType === 'application/pdf';
   };
 
   const formatFileSize = (bytes: number | null) => {
@@ -157,15 +218,26 @@ const DocumentsList = () => {
                     </p>
                   </div>
                   <div className="flex gap-2">
+                    {(isImage(doc.file_type) || isPdf(doc.file_type)) && (
+                      <button
+                        onClick={() => viewDocument(doc)}
+                        className="text-accent hover:text-accent/80"
+                        title="Ver documento"
+                      >
+                        <Eye className="w-5 h-5" />
+                      </button>
+                    )}
                     <button
                       onClick={() => downloadDocument(doc.file_url, doc.name)}
                       className="text-primary hover:text-primary/80"
+                      title="Descargar"
                     >
                       <Download className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => deleteDocument(doc.id, doc.file_url)}
                       className="text-destructive hover:text-destructive/80"
+                      title="Eliminar"
                     >
                       <Trash2 className="w-5 h-5" />
                     </button>
@@ -176,6 +248,33 @@ const DocumentsList = () => {
           )}
         </div>
       </main>
+
+      {/* Document Preview Dialog */}
+      <Dialog open={previewOpen} onOpenChange={(open) => !open && closePreview()}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between pr-8">
+              <span className="truncate">{previewName}</span>
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-auto min-h-0">
+            {previewUrl && isImage(previewType) && (
+              <img
+                src={previewUrl}
+                alt={previewName}
+                className="w-full h-auto object-contain max-h-[70vh]"
+              />
+            )}
+            {previewUrl && isPdf(previewType) && (
+              <iframe
+                src={previewUrl}
+                title={previewName}
+                className="w-full h-[70vh] border-0"
+              />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
