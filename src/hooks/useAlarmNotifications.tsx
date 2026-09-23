@@ -82,7 +82,7 @@ const sendEmailNotification = async (alarm: Alarm) => {
 };
 
 export const useAlarmNotifications = (userId: string | undefined) => {
-  const checkIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const triggeredAlarmsRef = useRef<Set<string>>(new Set());
 
   const checkAlarms = useCallback(async () => {
