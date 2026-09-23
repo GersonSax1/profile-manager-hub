@@ -82,6 +82,9 @@ const Auth = () => {
         if (error) {
           if (error.message.includes('Invalid login credentials')) {
             toast.error('Credenciales incorrectas');
+          } else if (error.message.toLowerCase().includes('not confirmed')) {
+            toast.error('Debes confirmar tu correo. Revisa tu bandeja de entrada.');
+            setNeedsConfirmation(true);
           } else {
             toast.error(error.message);
           }
@@ -98,7 +101,8 @@ const Auth = () => {
             toast.error(error.message);
           }
         } else {
-          toast.success('¡Cuenta creada! Ahora puedes iniciar sesión');
+          toast.success('¡Cuenta creada! Te enviamos un correo de verificación');
+          setNeedsConfirmation(true);
           setIsLogin(true);
         }
       }
